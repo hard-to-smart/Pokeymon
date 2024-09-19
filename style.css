@@ -43,7 +43,7 @@
     transform: rotateY(180deg);
   }
   .filter_box{
-    display: block;
+    display: inline-block;
   }
   .filter_box input[type=text] {
     float: right;
@@ -53,4 +53,8 @@
     margin-right: 16px;
     font-size: 17px;
   }
-  
+  .top-bar{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
