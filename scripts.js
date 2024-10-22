@@ -1,45 +1,50 @@
-const parent = document.querySelector(".parent")
+const fetchedData = [];
+const limit = 20;
+const api = `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=0`;
 
-const pokemonList =[];
-async function getAPI(limitVal, offsetVal){
-const api_url = "https://pokeapi.co/api/v2/pokemon";
-//adding query parameters using template literals
-let limit = 0;
-let offset =0;
-limit+= limitVal;
-offset+= offsetVal;
-const full_api_url=  `${api_url}?limit=${limit}&offset=${offset}`;
-console.log(full_api_url);
-try{
-    const response = await fetch(full_api_url);
-    const data = await response.json()
-    console.log(data)
-    const loadNextData = data.next
-    console.log(loadNextData)
-    const pokemons = data.results;
-    const eachPokemon=()=>{
-        pokemons.map(async(pokemon) => {
-            try{
-            const pokeName = pokemon.name;
-            const pokeUrl = await fetch(pokemon.url);
-            const pokeType = pokeUrl.json().types.type;
-            console.log(pokeName, pokeType)
-            }catch(e){
-                console.log(e)
-            }
+const pokemonContainer = document.getElementById("parent");
 
-            console.log(pokeName, pokeUrl, pokeType)
-        });
-    }
-    eachPokemon()
+const fetchData = async (api) => {
+  try {
+    const response = await fetch(api);
+    const data = await response.json();
 
-    
+    const fetchPromises = data.results.map(async (result) => {
+      const pokemonResponse = await fetch(result.url);
+      return await pokemonResponse.json();
+    });
+
+    const pokemons = await Promise.all(fetchPromises);
+    fetchedData.push(...pokemons);
+    displayData();
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
+
+function displayData() {
+  fetchedData.forEach((pokemon) => {
+    let card = document.createElement("div");
+    let cardInner = `
+    <div class ="flip-card">
+        <div class="flip-card-inner">
+            <div class="flip-card-front">
+                <img src="${pokemon.sprites.other.dream_world.front_default}" alt="${
+      pokemon.name
+    }" style="width:300px;height:300px;">
+            </div>
+            <div class="flip-card-back">
+                <h1>${pokemon.name}</h1>
+                <p>Types: ${pokemon.types
+                  .map((t) => t.type.name)
+                  .join(", ")}</p>
+            </div>
+        </div>
+        </div>`;
+
+    card.innerHTML = cardInner;
+    pokemonContainer.append(card);
+  });
 }
-catch(e){
-    console.log(e);
-}
 
-}
-
-
-getAPI(1, 0);
+fetchData(api);
