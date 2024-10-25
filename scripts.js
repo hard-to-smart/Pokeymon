@@ -1,28 +1,51 @@
-const fetchedData = [];
-const limit = 20;
-const api = `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=0`;
-
+let limit = 20;
 const pokemonContainer = document.getElementById("parent");
+const searchInput = document.getElementById("input-text")
+const searchValue = searchInput.addEventListener('change', getSearchInput());
 
-const fetchData = async (api) => {
+
+//load more
+const loadMoreButton = document.getElementById("load-more-btn");
+loadMoreButton.addEventListener('click', ()=> {
+  limit+=20;
+  fetchData(limit)
+})
+function getSearchInput(){
+  console.log(searchInput.value)
+}
+
+console.log(searchValue)
+
+
+
+// fetching data
+const fetchData = async (limit) => {
+  let fetchedData = [];
+  console.log(fetchedData)
   try {
+    console.log(limit)
+    const api = `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=0`;
     const response = await fetch(api);
     const data = await response.json();
 
-    const fetchPromises = data.results.map(async (result) => {
+    let fetchPromises = data.results.map(async (result) => {
       const pokemonResponse = await fetch(result.url);
       return await pokemonResponse.json();
     });
 
     const pokemons = await Promise.all(fetchPromises);
-    fetchedData.push(...pokemons);
-    displayData();
+    fetchedData = pokemons
+    displayData(fetchedData);
   } catch (error) {
     console.error("Error fetching data:", error);
   }
 };
 
-function displayData() {
+
+
+// displaying data
+function displayData(fetchedData) {
+  pokemonContainer.innerHTML = ''
   fetchedData.forEach((pokemon) => {
     let card = document.createElement("div");
     let cardInner = `
@@ -47,4 +70,6 @@ function displayData() {
   });
 }
 
-fetchData(api);
+// filtering data
+
+fetchData(limit)

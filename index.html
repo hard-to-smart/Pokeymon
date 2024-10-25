@@ -9,15 +9,13 @@
 <body>
     <div class="top-bar">
         <div class="filter_box">
-            <div class="custom-select" style="width:200px;">
+            <div class="custom-select" style="display: flex; gap: 10px;">
                 <select id="types">
                     <option value="all">all</option>
 
                 </select>
+                <input type="text" placeholder="Search.." id="input-text">
             </div>
-        </div>
-        <div class="search_box">
-            <input type="text" placeholder="Search..">
         </div>
     </div>
     <div id="parent">
@@ -25,7 +23,7 @@
         </div>
     </div>
     <div>
-        <button id="loadMore" > Load More</button>
+        <button id="load-more-btn" > Load More</button>
     </div>
       <script src="scripts.js" ></script>
 </body>
